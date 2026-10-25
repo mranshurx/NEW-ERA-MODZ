@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Proxy Config Portal</title>
+  <style>
+    body { font-family: sans-serif; background: #0f172a; color: #f8fafc; padding: 20px; }
+    .card { background: #1e293b; border-radius: 8px; padding: 20px; max-width: 500px; margin: auto; }
+    button { background: #3b82f6; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; }
+    button:hover { background: #2563eb; }
+    pre { background: #0f172a; padding: 10px; border-radius: 5px; overflow-x: auto; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>⚡ Proxy Connection Portal</h2>
+    <p><strong>Server:</strong> wraith-bom.xreg.site:443</p>
+    <p><strong>Protocol:</strong> Hysteria v2 (QUIC / h3)</p>
+    
+    <button onclick="copyConfig()">📋 Copy JSON Config</button>
+    <button onclick="downloadConfig()">💾 Download Config.json</button>
+
+    <h3>Raw Configuration</h3>
+    <pre id="configDisplay">Loading...</pre>
+  </div>
+
+  <script>
+    let rawData = {};
+    fetch('/api/config')
+      .then(res => res.json())
+      .then(data => {
+        rawData = data;
+        document.getElementById('configDisplay').textContent = JSON.stringify(data, null, 2);
+      });
+
+    function copyConfig() {
+      navigator.clipboard.writeText(JSON.stringify(rawData, null, 2));
+      alert('Config copied to clipboard!');
+    }
+
+    function downloadConfig() {
+      const blob = new Blob([JSON.stringify(rawData, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'hysteria-config.json';
+      a.click();
+    }
+  </script>
+</body>
+</html>
